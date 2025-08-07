@@ -1,7 +1,10 @@
 import numpy as np
 # G = 6.67430e-11
-G = 10
-timestep = 0.01
+G = 100
+timestep = 1.0/120
+
+distance_limit = 2000
+
 class simulation:
     def __init__(self, bodies):
         self.bodies = bodies
@@ -17,18 +20,26 @@ class simulation:
         net_forces = [np.zeros(2, dtype=float) for _ in self.bodies]
 
         for i, body1 in enumerate(self.bodies):
-            for j, body2 in enumerate(self.bodies):
-                if  i == j: # same body
-                    continue
+            for j in range(i + 1, len(self.bodies)):
+                body2 = self.bodies[j]
+
+            # for j, body2 in enumerate(self.bodies):
+                # if  i == j: # same body
+                #     continue
+
+
+
                 r_vec = body2.position - body1.position
                 distance = np.linalg.norm(r_vec)
                 if distance == 0: # collision
                     continue
+                # elif distance > distance_limit:
                     
                 force_mag = G * body1.mass * body2.mass / distance  ** 2
                 force_vec = force_mag * (r_vec/distance) # magnitude * unit vector
 
                 net_forces[i] += force_vec
+                net_forces[j] -= force_vec
     
         return net_forces
 
@@ -36,7 +47,14 @@ class simulation:
 
 class body:
     def __init__(self, mass, velocity, position):
+        # self.type = type
         self.mass = mass
+        if mass >= 1000:
+            self.type = "star"
+        elif mass >= 10:
+            self.type = "planet"
+        else:
+            self.type = "minor"
         self.velocity = np.array(velocity, dtype=float)
         self.position = np.array(position, dtype=float)
 
