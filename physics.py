@@ -31,8 +31,10 @@ class simulation:
 
                 r_vec = body2.position - body1.position
                 distance = np.linalg.norm(r_vec)
-                if distance == 0: # collision
-                    continue
+                if distance <= 10: # collision
+                    print("boop")
+                    self.collision(body1, body2)
+
                 # elif distance > distance_limit:
                     
                 force_mag = G * body1.mass * body2.mass / distance  ** 2
@@ -42,6 +44,28 @@ class simulation:
                 net_forces[j] -= force_vec
     
         return net_forces
+
+    def collision(self, body1, body2):
+
+        v1 = body1.velocity
+        v2 = body2.velocity
+        x1 = body1.position
+        x2 = body2.position
+        
+        mass_factor1 = 2 * body2.mass / (body1.mass + body2.mass)
+        mass_factor2 = 2 * body1.mass / (body1.mass + body2.mass)
+
+        relative_pos = x1 - x2
+        relative_vel = v1 - v2
+        dot_product = np.dot(relative_vel, relative_pos)
+        squared_distance = np.dot(relative_pos, relative_pos)
+
+        deltav1 = mass_factor1 * dot_product * relative_pos / squared_distance
+        deltav2 = mass_factor2 * dot_product * (-relative_pos) / squared_distance
+
+        body1.velocity -= deltav1
+        body2.velocity -= deltav2
+
 
 
 

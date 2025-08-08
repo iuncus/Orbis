@@ -9,7 +9,7 @@ red = (255, 0, 0)
 blue = (0, 0, 255)
 canvas = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Orbis")
-launch_multiplier = 4
+launch_multiplier = 3
 exit = False
 
 clock = pygame.time.Clock()
@@ -69,7 +69,7 @@ while not exit:
         # draw expected trajectory 
         if click_coord != mouse_pos:
             trajectory = []
-            for i in range(50):
+            for i in range(70):
                 pos = ghost.position.copy()
                 ghost_sim.step()
                 # new_pos = ghost_body.position
@@ -99,7 +99,7 @@ while not exit:
         gfxdraw.aacircle(canvas, int(i.position[0]), int(i.position[1]), size, colour)
         gfxdraw.filled_circle(canvas, int(i.position[0]), int(i.position[1]), size, colour)
 
-    print(clock.get_fps())
+    # print(clock.get_fps())
 
     pygame.display.update()
     # clock.tick(60)
