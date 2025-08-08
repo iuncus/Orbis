@@ -1,7 +1,7 @@
 import numpy as np
 # G = 6.67430e-11
-G = 100
-timestep = 1.0/120
+G = 50
+timestep = 1.0/240
 
 distance_limit = 2000
 
@@ -23,16 +23,10 @@ class simulation:
             for j in range(i + 1, len(self.bodies)):
                 body2 = self.bodies[j]
 
-            # for j, body2 in enumerate(self.bodies):
-                # if  i == j: # same body
-                #     continue
-
-
-
                 r_vec = body2.position - body1.position
                 distance = np.linalg.norm(r_vec)
                 if distance <= 10: # collision
-                    print("boop")
+                    # print("boop")
                     self.collision(body1, body2)
 
                 # elif distance > distance_limit:
@@ -51,7 +45,7 @@ class simulation:
         v2 = body2.velocity
         x1 = body1.position
         x2 = body2.position
-        
+
         mass_factor1 = 2 * body2.mass / (body1.mass + body2.mass)
         mass_factor2 = 2 * body1.mass / (body1.mass + body2.mass)
 
@@ -60,8 +54,8 @@ class simulation:
         dot_product = np.dot(relative_vel, relative_pos)
         squared_distance = np.dot(relative_pos, relative_pos)
 
-        deltav1 = mass_factor1 * dot_product * relative_pos / squared_distance
-        deltav2 = mass_factor2 * dot_product * (-relative_pos) / squared_distance
+        deltav1 = mass_factor1 * (dot_product / squared_distance) * relative_pos 
+        deltav2 = mass_factor2 * (dot_product / squared_distance) * (-relative_pos)
 
         body1.velocity -= deltav1
         body2.velocity -= deltav2
@@ -82,11 +76,19 @@ class body:
         self.velocity = np.array(velocity, dtype=float)
         self.position = np.array(position, dtype=float)
 
-    def move(self, force):
+        self.pos_history = []
 
+    def move(self, force):
         d_vec = force / self.mass * timestep
         self.position += self.velocity * timestep
         self.velocity += d_vec
+
+        if self.type != "star":
+            self.pos_history.append(self.position.copy())
+        if len(self.pos_history) >= 1000:
+            self.pos_history.pop(0)
+
+
 
 
 
